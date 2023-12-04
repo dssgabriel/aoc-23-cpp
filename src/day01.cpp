@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdint>
+#include <chrono>
 #include <filesystem>
 #include <fmt/core.h>
+#include <fmt/chrono.h>
 #include <fstream>
 #include <iterator>
 #include <numeric>
@@ -15,6 +17,7 @@
 namespace fs = std::filesystem;
 namespace ranges = std::ranges;
 namespace rv = ranges::views;
+using namespace std::chrono;
 
 #define aoc_assert(expr, msg, ...)                                                                 \
     do {                                                                                           \
@@ -85,8 +88,16 @@ auto main(int32_t argc, char* argv[]) -> int32_t {
     fs::path input_path("input/day01.txt");
     if (argc > 1) { input_path = argv[1]; }
     auto input = read_input(input_path);
-    fmt::print("Part 1: {}\n", part1(input));
-    fmt::print("Part 2: {}\n", part2(input));
+
+    auto start = high_resolution_clock::now();
+    ans1 = part1(input);
+    auto stop = high_resolution_clock::now();
+    fmt::print("Part 1: {} (in {})\n", ans1, duration_cast<microseconds>(stop - start));
+
+    start = high_resolution_clock::now();
+    ans2 = part2(input);
+    stop = high_resolution_clock::now();
+    fmt::print("Part 2: {} (in {})\n", ans2, duration_cast<microseconds>(stop - start));
 
     return 0;
 }
