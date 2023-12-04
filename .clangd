@@ -1,0 +1,13 @@
+CompileFlags:
+    Add: [-Wall, -Wextra, -Wconversion, --include-dir=include/, -march=native, -std=c++2b]
+    Compiler: gcc
+
+Diagnostics:
+    ClangTidy:
+        Remove: cppcoreguidelines*, fuschia*, google*, readability*
+
+InlayHints:
+    Designators: Yes
+    Enabled: Yes
+    ParameterNames: Yes
+    DeducedTypes: Yes
