@@ -1,46 +1,21 @@
+#include "aoc23_utils.hpp"
+
 #include <algorithm>
 #include <cctype>
-#include <cstdint>
 #include <chrono>
-#include <filesystem>
-#include <fmt/core.h>
 #include <fmt/chrono.h>
-#include <fstream>
 #include <iterator>
+#include <nanobench.h>
 #include <numeric>
 #include <ranges>
-#include <stdlib.h>
-#include <string>
-#include <string_view>
 #include <vector>
 
-namespace fs = std::filesystem;
-namespace ranges = std::ranges;
-namespace rv = ranges::views;
+namespace rv = std::ranges::views;
 using namespace std::chrono;
-
-#define aoc_assert(expr, msg, ...)                                                                 \
-    do {                                                                                           \
-        if (!(expr)) {                                                                             \
-            fmt::print(stderr, "\x1b[1;31massertion failed: \x1b[0m" msg "\n", ##__VA_ARGS__);     \
-            std::abort();                                                                          \
-        }                                                                                          \
-    } while (false)
 
 static auto to_digit(char c) -> int32_t {
     return static_cast<int32_t>(c - '0');
 };
-
-constexpr std::array<std::string, 9> STR_DIGITS{ "one", "two",   "three", "four", "five",
-                                                 "six", "seven", "eight", "nine" };
-
-auto read_input(fs::path const& path) -> std::string {
-    std::ifstream fin(path, std::ios::in | std::ios::binary);
-    auto const fsz = fs::file_size(path);
-    std::string content(fsz, '\0');
-    fin.read(content.data(), fsz);
-    return content;
-}
 
 auto part1(std::string_view input) -> int32_t {
     auto is_digit = [](char c) -> bool { return std::isdigit(static_cast<uint8_t>(c)); };
@@ -54,9 +29,11 @@ auto part1(std::string_view input) -> int32_t {
     });
 }
 
+constexpr std::array<std::string, 9> STR_DIGITS{ "one", "two",   "three", "four", "five",
+                                                 "six", "seven", "eight", "nine" };
 auto part2(std::string_view input) -> int32_t {
     auto lines = input | rv::split('\n');
-    return std::transform_reduce(lines.begin(), lines.end(), 0, std::plus{}, [](auto const& line) {
+    return std::transform_reduce(lines.begin(), lines.end(), 0, std::plus{}, [=](auto const& line) {
         std::string_view lv(line.begin(), line.end());
         if (lv.empty()) { return 0; }
         std::vector<int32_t> digits;
@@ -74,30 +51,38 @@ auto part2(std::string_view input) -> int32_t {
 }
 
 auto main(int32_t argc, char* argv[]) -> int32_t {
-    // Test part 1
+    // Tests
     fs::path test_path1("sample_input/day01a.txt");
-    auto test1 = read_input(test_path1);
+    auto test1 = aoc23_utils::read_input(test_path1);
     int32_t ans1 = part1(test1);
-    aoc_assert(ans1 == 142, "test part 1\n\texpected {}, got {}", 142, ans1);
-    // Test part 2
+    assert(ans1 == 142, "test part 1\n\texpected {}, got {}", 142, ans1);
     fs::path test_path2("sample_input/day01b.txt");
-    auto test2 = read_input(test_path2);
+    auto test2 = aoc23_utils::read_input(test_path2);
     int32_t ans2 = part2(test2);
-    aoc_assert(ans2 == 281, "test part 2\n\texpected {}, got {}", 281, ans2);
+    assert(ans2 == 281, "test part 2\n\texpected {}, got {}", 281, ans2);
 
+    // Read input
     fs::path input_path("input/day01.txt");
     if (argc > 1) { input_path = argv[1]; }
-    auto input = read_input(input_path);
+    auto input = aoc23_utils::read_input(input_path);
 
-    auto start = high_resolution_clock::now();
+    // Answers
     ans1 = part1(input);
-    auto stop = high_resolution_clock::now();
-    fmt::print("Part 1: {} (in {})\n", ans1, duration_cast<microseconds>(stop - start));
-
-    start = high_resolution_clock::now();
+    fmt::print("Part 1: {}\n", ans1);
     ans2 = part2(input);
-    stop = high_resolution_clock::now();
-    fmt::print("Part 2: {} (in {})\n", ans2, duration_cast<microseconds>(stop - start));
+    fmt::print("Part 2: {}\n", ans2);
+
+    // Profiling
+    ankerl::nanobench::Bench()
+        .timeUnit(1us, "µs")
+        .epochs(31)
+        .warmup(3)
+        .run("part1", [&] { ankerl::nanobench::doNotOptimizeAway(part1(input)); });
+    ankerl::nanobench::Bench()
+        .timeUnit(1us, "µs")
+        .epochs(31)
+        .warmup(3)
+        .run("part2", [&] { ankerl::nanobench::doNotOptimizeAway(part2(input)); });
 
     return 0;
 }
