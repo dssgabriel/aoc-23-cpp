@@ -23,3 +23,8 @@ add_executable(day1 src/day01.cpp)
 target_include_directories(day1 PRIVATE include)
 target_link_libraries(day1 PRIVATE aoc23_utils fmt::fmt nanobench)
 target_compile_features(day1 PUBLIC cxx_std_23)
+
+add_executable(day2 src/day02.cpp)
+target_include_directories(day2 PRIVATE include)
+target_link_libraries(day2 PRIVATE aoc23_utils fmt::fmt nanobench)
+target_compile_features(day2 PUBLIC cxx_std_23)
