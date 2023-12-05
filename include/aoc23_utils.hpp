@@ -23,6 +23,13 @@ using isz = ptrdiff_t;
 namespace fs = std::filesystem;
 
 namespace aoc23_utils {
+/// Read input file into string buffer.
+auto read_input(fs::path const& path) -> std::string;
+
+/// Convert characters to digits.
+auto to_digit(char c) -> i32;
+} // namespace aoc23_utils
+
 /// Utility assert macro
 #define assert(expr, msg, ...)                                                                     \
     do {                                                                                           \
@@ -31,7 +38,3 @@ namespace aoc23_utils {
             std::abort();                                                                          \
         }                                                                                          \
     } while (false)
-
-/// Read input file into string buffer.
-auto read_input(fs::path const& path) -> std::string;
-} // namespace aoc23_utils

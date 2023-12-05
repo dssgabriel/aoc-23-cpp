@@ -10,4 +10,8 @@ auto read_input(fs::path const& path) -> std::string {
     fin.read(content.data(), fsz);
     return content;
 }
+
+auto to_digit(char c) -> i32 {
+    return static_cast<i32>(c - '0');
+};
 }
